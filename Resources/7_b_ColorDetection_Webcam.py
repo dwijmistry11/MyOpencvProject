@@ -38,29 +38,34 @@ def stackImages(scale,imgArray):
         ver = hor
     return ver
 
-path = 'Resources/tulips.png'
 
 #creating trackbars to control Hue, Saturation and Value
 #in opencv Maximum Hue is 179
 # 0 16 11 255 53 255 default Setting this for red
+# 0 49 80 255 32 255 for skin color
 cv2.namedWindow("TrackBars")
 cv2.resizeWindow("TrackBars",900,800)
 cv2.createTrackbar("Hue Min", "TrackBars", 0, 179, empty)
-cv2.createTrackbar("Hue Max", "TrackBars", 16, 179, empty)
-cv2.createTrackbar("Sat Min", "TrackBars", 11, 255, empty)
+cv2.createTrackbar("Hue Max", "TrackBars", 49, 179, empty)
+cv2.createTrackbar("Sat Min", "TrackBars", 80, 255, empty)
 cv2.createTrackbar("Sat Max", "TrackBars", 255, 255, empty)
-cv2.createTrackbar("Val Min", "TrackBars", 53, 255, empty)
+cv2.createTrackbar("Val Min", "TrackBars", 32, 255, empty)
 cv2.createTrackbar("Val Max", "TrackBars", 255, 255, empty)
 
+# read video from webcam
+cap = cv2.VideoCapture(0)   #0-> ID of the camera
+cap.set(10,100)             #10-> Brighness
+# cap.set(3,640)              #3-> width
+# cap.set(4,480)              #4-> height
 
-# Reading Image
-img = cv2.imread(path)
-# convering into HSV space
-imgHSV = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
-
+#displaying video frame by frame
 #this while loop we can replace with video / Webcam
 while True:
+    success, img = cap.read()
+    cv2.imshow("Video", img)
+    # convering into HSV space
+    imgHSV = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
     h_min = cv2.getTrackbarPos("Hue Min", "TrackBars")
     h_max = cv2.getTrackbarPos("Hue Max", "TrackBars")
     s_min = cv2.getTrackbarPos("Sat Min", "TrackBars")
@@ -87,4 +92,6 @@ while True:
     # cv2.imshow("Original image", img)
     # cv2.imshow("HSV image", imgHSV)
 
-    cv2.waitKey(1)
+    # stop when video ends OR when user press 'q'
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
